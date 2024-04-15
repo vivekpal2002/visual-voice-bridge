@@ -23,6 +23,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.bumptech.glide.Glide;
+import android.widget.ImageView;
+
 public class VoiceActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 100;
@@ -73,36 +76,223 @@ public class VoiceActivity extends AppCompatActivity {
     }
 
     private void displaySignLanguageImage(String text) {
-        // This method should map the spoken text to the corresponding GIF file in the assets folder
-        // For simplicity, assume we have a method getGifFileNameForText which returns the GIF file name
-        String gifFileName = getGifFileNameForText(text);
-        if (!gifFileName.isEmpty()) {
-            try {
-                InputStream inputStream = getAssets().open(gifFileName);
-                byte[] bytes = new byte[inputStream.available()];
-                inputStream.read(bytes);
-                // Load the GIF from assets folder
-                imageViewSign.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error loading GIF", Toast.LENGTH_SHORT).show();
+        // This method should map the spoken text to the corresponding image or GIF file in the assets folder
+        // For simplicity, assume we have a method getFileNameForText which returns the file name
+        String fileName = getFileNameForText(text);
+        if (!fileName.isEmpty()) {
+            // Check the file extension
+            String extension = getFileExtension(fileName);
+            if (extension.equalsIgnoreCase("gif")) {
+                // Load GIF using Glide
+                Glide.with(this)
+                        .asGif()
+                        .load("file:///android_asset/" + fileName)
+                        .into(imageViewSign);
+            } else {
+                // Load image using Glide
+                Glide.with(this)
+                        .load("file:///android_asset/" + fileName)
+                        .into(imageViewSign);
             }
         } else {
-            imageViewSign.setImageURI(null);
+            imageViewSign.setImageDrawable(null);
             Toast.makeText(this, "No sign found for the text", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private String getGifFileNameForText(String text) {
+    private String getFileNameForText(String text) {
         // Simple mapping for demonstration
         // You might want to implement a more sophisticated mapping based on your requirements
         switch (text.toLowerCase()) {
             case "i am sorry":
                 return "i am sorry.gif";
-            // Add more cases as needed
+            case "address":
+                return "address.gif";
+            case "ahemdabad":
+                return "ahemdabad.gif";
+            case "all":
+                return "all.gif";
+            case "any questions":
+                return "any questions.gif";
+            case "are you angry":
+                return "are you angry.gif";
+            case "are you busy":
+                return "are you busy.gif";
+            case "are you hungry":
+                return "are you hungry.gif";
+            case "assam":
+                return "assam.gif";
+            case "august":
+                return "august.gif";
+            case "banana":
+                return "banana.gif";
+            case "banaras":
+                return "banaras.gif";
+            case "banglore":
+                return "banglore.gif";
+            case "be careful":
+                return "be careful.gif";
+            case "bridge":
+                return "bridge.gif";
+            case "cat":
+                return "cat.gif";
+            case "christmas":
+                return "christmas.gif";
+            case "church":
+                return "church.gif";
+            case "cilinic":
+                return "cilinic.gif";
+            case "dasara":
+                return "dasara.gif";
+            case "december":
+                return "december.gif";
+            case "did you finish homework":
+                return "did you finish homework.gif";
+            case "do you have money":
+                return "do you have money.gif";
+            case "do you want something to drink":
+                return "do you want something to drink.gif";
+            case "do you watch tv":
+                return "do you watch tv.gif";
+            case "dont worry":
+                return "dont worry.gif";
+            case "flower is beautiful":
+                return "flower is beautiful.gif";
+            case "good afternoon":
+                return "good afternoon.gif";
+            case "good morning":
+                return "good morning.gif";
+            case "good question":
+                return "good question.gif";
+            case "grapes":
+                return "grapes.gif";
+            case "hello":
+                return "hello.gif";
+            case "hindu":
+                return "hindu.gif";
+            case "hyderabad":
+                return "hyderabad.gif";
+            case "i am a clerk":
+                return "i am a clerk.gif";
+            case "i am fine":
+                return "i am fine.gif";
+            case "i am thinking":
+                return "i am thinking.gif";
+            case "i am tired":
+                return "i am tired.gif";
+            case "i go to a theatre":
+                return "i go to a theatre.gif";
+            case "i had to say something but i forgot":
+                return "i had to say something but i forgot.gif";
+            case "i like pink colour":
+                return "i like pink colour.gif";
+            case "i love to shop":
+                return "i love to shop.gif";
+            case "job":
+                return "job.gif";
+            case "july":
+                return "july.gif";
+            case "june":
+                return "june.gif";
+            case "karnataka":
+                return "karnataka.gif";
+            case "kerala":
+                return "kerala.gif";
+            case "krishna":
+                return "krishna.gif";
+            case "lets go for lunch":
+                return "lets go for lunch.gif";
+            case "mango":
+                return "mango.gif";
+            case "may":
+                return "may.gif";
+            case "mile":
+                return "mile.gif";
+            case "mumbai":
+                return "mumbai.gif";
+            case "nagpur":
+                return "nagpur.gif";
+            case "nice to meet you":
+                return "nice to meet you.gif";
+            case "open the door":
+                return "open the door.gif";
+            case "please call me later":
+                return "please call me later.gif";
+            case "please wait for sometime":
+                return "please wait for sometime.gif";
+            case "police station":
+                return "police station.gif";
+            case "post office":
+                return "post office.gif";
+            case "pune":
+                return "pune.gif";
+            case "punjab":
+                return "punjab.gif";
+            case "saturday":
+                return "saturday.gif";
+            case "shall i help you":
+                return "shall i help you.gif";
+            case "shall we go together tommorow":
+                return "shall we go together tommorow.gif";
+            case "shop":
+                return "shop.gif";
+            case "sign language interpreter":
+                return "sign language interpreter.gif";
+            case "sit down":
+                return "sit down.gif";
+            case "stand up":
+                return "stand up.gif";
+            case "take care":
+                return "take care.gif";
+            case "temple":
+                return "temple.gif";
+            case "there was traffic jam":
+                return "there was traffic jam.gif";
+            case "thursday":
+                return "thursday.gif";
+            case "toilet":
+                return "toilet.gif";
+            case "tomato":
+                return "tomato.gif";
+            case "tuesday":
+                return "tuesday.gif";
+            case "usa":
+                return "usa.gif";
+            case "village":
+                return "village.gif";
+            case "wednesday":
+                return "wednesday.gif";
+            case "what are you doing":
+                return "what are you doing.gif";
+            case "what is the problem":
+                return "what is the problem.gif";
+            case "what is today's date":
+                return "what is today's date.gif";
+            case "what is your father do":
+                return "what is your father do.gif";
+            case "what is your mobile number":
+                return "what is your mobile number.gif";
+            case "what is your name":
+                return "what is your name.gif";
+            case "whats up":
+                return "whats up.gif";
+            case "where is the bathroom":
+                return "where is the bathroom.gif";
+            case "where is the police station":
+                return "where is the police station.gif";
+            case "you are wrong":
+                return "you are wrong.gif";
             default:
                 return "";
         }
+
     }
 
+    private String getFileExtension(String fileName) {
+        if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1);
+        } else {
+            return "";
+        }
+    }
 }

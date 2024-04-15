@@ -1,6 +1,6 @@
 package mquinn.sign_language.svm;
 
-public enum LetterClass {
+public enum  LetterClass {
 
     NONE(0),
     A(1),
