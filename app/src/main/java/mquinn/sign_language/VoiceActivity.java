@@ -3,11 +3,8 @@ package mquinn.sign_language;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,13 +15,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import com.bumptech.glide.Glide;
-import android.widget.ImageView;
 
 public class VoiceActivity extends AppCompatActivity {
 
@@ -108,7 +102,7 @@ public class VoiceActivity extends AppCompatActivity {
                 return "i am sorry.gif";
             case "address":
                 return "address.gif";
-            case "ahemdabad":
+            case "Ahmedabad":
                 return "ahemdabad.gif";
             case "all":
                 return "all.gif";
@@ -128,7 +122,7 @@ public class VoiceActivity extends AppCompatActivity {
                 return "banana.gif";
             case "banaras":
                 return "banaras.gif";
-            case "banglore":
+            case "Bangalore":
                 return "banglore.gif";
             case "be careful":
                 return "be careful.gif";
@@ -154,7 +148,7 @@ public class VoiceActivity extends AppCompatActivity {
                 return "do you want something to drink.gif";
             case "do you watch tv":
                 return "do you watch tv.gif";
-            case "dont worry":
+            case "don't worry":
                 return "dont worry.gif";
             case "flower is beautiful":
                 return "flower is beautiful.gif";
@@ -232,7 +226,7 @@ public class VoiceActivity extends AppCompatActivity {
                 return "saturday.gif";
             case "shall i help you":
                 return "shall i help you.gif";
-            case "shall we go together tommorow":
+            case "shall we go together tomorrow":
                 return "shall we go together tommorow.gif";
             case "shop":
                 return "shop.gif";
