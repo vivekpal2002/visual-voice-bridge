@@ -15,7 +15,7 @@
         android:id="@+id/imageViewSign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/good afternoon"
+        android:src="@drawable/good morning"
         tools:layout_editor_absoluteX="270dp"
         tools:layout_editor_absoluteY="188dp"/>
 
