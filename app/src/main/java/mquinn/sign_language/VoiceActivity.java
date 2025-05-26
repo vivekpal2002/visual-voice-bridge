@@ -1,8 +1,10 @@
 package mquinn.sign_language;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
@@ -69,6 +71,7 @@ public class VoiceActivity extends AppCompatActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     private void displaySignLanguageImage(String text) {
         // This method should map the spoken text to the corresponding image or GIF file in the assets folder
         // For simplicity, assume we have a method getFileNameForText which returns the file name

@@ -1,12 +1,16 @@
 package mquinn.sign_language;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import android.speech.tts.TextToSpeech;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -26,6 +31,7 @@ import org.opencv.core.Mat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Locale;
 
 import mquinn.sign_language.imaging.IFrame;
 import mquinn.sign_language.processing.DetectionMethod;
@@ -44,10 +50,11 @@ import mquinn.sign_language.rendering.IRenderer;
 import mquinn.sign_language.rendering.MainRenderer;
 import mquinn.sign_language.svm.FrameClassifier;
 
-public class SignActivity extends Activity implements CvCameraViewListener2 {
+public class SignActivity extends Activity implements CvCameraViewListener2, TextToSpeech.OnInitListener {
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
+    private TextToSpeech textToSpeech;
     private IFramePreProcessor preProcessor;
     private IFramePostProcessor postProcessor;
     private IFrame preProcessedFrame, processedFrame, postProcessedFrame, classifiedFrame;
@@ -63,19 +70,19 @@ public class SignActivity extends Activity implements CvCameraViewListener2 {
 
     private DetectionMethod detectionMethod;
 
-    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
+                case LoaderCallbackInterface.SUCCESS: {
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.enableFpsMeter();
-                } break;
-                default:
-                {
+                }
+                break;
+                default: {
                     super.onManagerConnected(status);
-                } break;
+                }
+                break;
             }
         }
     };
@@ -83,6 +90,9 @@ public class SignActivity extends Activity implements CvCameraViewListener2 {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        textToSpeech = new TextToSpeech(this, this);
+
 
         // Set view parameters
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -97,8 +107,8 @@ public class SignActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.setCvCameraViewListener(this);
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED){
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, 1);
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
         }
 
         btnAdd = (Button) findViewById(R.id.button_add);
@@ -107,35 +117,68 @@ public class SignActivity extends Activity implements CvCameraViewListener2 {
         txtView = (TextView) findViewById(R.id.textView);
 
 
-        btnAdd.setOnClickListener(new View.OnClickListener()
-        {
+        // Button listeners
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
-            public void onClick(View v)
-            {
-                if (!modLetter.equals("?"))
+            public void onClick(View v) {
+                if (!modLetter.equals("?")) {
                     txtView.append(modLetter);
+                    // Check if the added letter is a space
+                    if (modLetter.equals(" ")) {
+                        // Speak the word
+                        speakWord(txtView.getText().toString());
+                    } else {
+                        // Speak out the added letter
+                        speakOut(modLetter);
+                    }
+                }
             }
         });
-        btnClear.setOnClickListener(new View.OnClickListener()
-        {
+        btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 txtView.setText("");
             }
         });
-        btnBack.setOnClickListener(new View.OnClickListener()
-        {
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                txtView.setText(txtView.getText().toString().substring(0, txtView.getText().toString().length() - 1));
+            public void onClick(View v) {
+                String text = txtView.getText().toString();
+                if (!text.isEmpty()) {
+                    txtView.setText(text.substring(0, text.length() - 1));
+                }
             }
         });
-
-
     }
 
+    @TargetApi(Build.VERSION_CODES.DONUT)
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            // Set language for Text-to-Speech
+            int result = textToSpeech.setLanguage(Locale.US);
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "Language not supported");
+            }
+        } else {
+            Log.e("TTS", "Initialization failed");
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void speakOut(String text) {
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void speakWord(String text) {
+        // Speak the word
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
         // Generate Frame from input frame and downsample
@@ -185,6 +228,11 @@ public class SignActivity extends Activity implements CvCameraViewListener2 {
         super.onDestroy();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+        // Shutdown Text-to-Speech engine
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
     }
 
 
